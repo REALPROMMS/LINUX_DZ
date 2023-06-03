@@ -1,0 +1,13 @@
+Makarov@makarov-linux:~$ cat > file
+Makarov@makarov-linux:~$ cat > file1
+Makarov@makarov-linux:~$ more > file1
+Makarov@makarov-linux:~$ mv file1 file2
+Makarov@makarov-linux:~$ mkdir dir
+Makarov@makarov-linux:~$ cp file2 dir
+Makarov@makarov-linux:~$ ls
+Makarov@makarov-linux:~$ ln -s file2 link
+Makarov@makarov-linux:~$ rm file
+Makarov@makarov-linux:~$ cat > file5
+Makarov@makarov-linux:~$ in -s file5 link
+Makarov@makarov-linux:~$ mkdir dir1
+Makarov@makarov-linux:~$ cp file5 dir1
