@@ -1,0 +1,15 @@
+Пункт 1.
+touch filetest
+touch filetest2
+chmod u=rw, g=rw, o=r filetest
+chmod u=rw, g=, o= filetest2
+chmod 664 filetest
+chmod 600 filetest  
+
+Пункт 2.
+chown -R db :www-data test/
+
+Пункт 3.
+useradd -s /bin/bash -m -d /home/test test
+adduser test2
+userdel test2
