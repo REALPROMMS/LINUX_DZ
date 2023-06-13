@@ -1,0 +1,43 @@
+#!/bin/bash
+
+directory=$1
+
+# Проверяем, существует ли директория
+if [ ! -d "$directory" ]; then 
+	echo "Ошибка: Директория не существует."
+	exit 1
+fi
+
+# Удаляем файлы с расширением .bak, .tmp, .backup
+find "$directory" - type f \( -name "*.bak" -o -name ")
+
+echo "Очистика завершена."
+
+# Проверяем, существует ли директория
+if [ ! -d "$directory" ]; then
+	echo "Ошибка: Директория не существует."
+	exit 1
+fi
+
+# Перебираем все файлы в указанной директории
+for file in "$directory"/*; do
+	if [ -f "$file" ]; then
+		# Получаем имя владельца файла
+		owner=$(stat -c '%U' "$file")
+
+		# Проверяем, существует ли директория с именем владельца файла
+		if [ ! -d "directory/$owner" ]; then
+			# Если директория не существует, создаем ее
+			mkdir "$directory/$owner"
+
+		fi
+
+		# Копируем файл в соответствующую директорию 
+		cp "$file" "$directory/$owner
+
+		# Присаиваем файлу владельца
+		chown "$owner" "$directory/$owner/$(basename "$file")"
+	fi
+done 
+
+echo "Сортировка завершена."
