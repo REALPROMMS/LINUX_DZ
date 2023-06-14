@@ -1,0 +1,67 @@
+1. Подключение дополнительного репозитория Docker. Установка пакета из репо.
+
+Команда: 
+sudo nano /etc/apt/sources.list.d/docker.list
+В файле указываем строку:
+deb [arch=amd64] h;ps://download.docker.com/linux/ubuntu jammy stable
+Команда: 
+curl -fsSL h;ps://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o 
+/usr/share/keyrings/docker-archive-keyring.gpg
+Обновляем список пакетов: 
+sudo apt update
+Устанавливаем пакет Docker: 
+sudo apt install docker-ce
+
+
+2. Установка и удаление deb-пакета MC с помощью утилиты dpkg
+
+Команда для скачивания пакета:
+wget h;p://archive.ubuntu.com/ubuntu/pool/universe/m/mc/mc_4.8.24-
+2ubuntu1_amd64.deb
+Устанавливаем пакет:
+sudo dpkg -i mc_4.8.27-1_amd64.deb
+sudo apt install -f
+Удаляем пакет:
+sudo dpkg -r mc
+Удаляем настройки:
+sudo dpkg --purge mc
+
+
+3. Установить и удалить snap-пакет Chrom
+
+Команда для установки пакета:
+sudo snap install chromium
+Удаление пакета:
+sudo snap remove chromium
+
+
+4. Добавить задачу для выполнения каждые 3 минуты (создание директории, 
+запись в файл). 
+
+Команда для редактирования crontab:
+crontab -e
+Записываем в файл скрипт:
+5 * * * * mkdir testdir && cat >> tesPile
+
+
+5. * Подключить PPA-репозиторий на выбор. Установить из него пакет. Удалить PPA 
+из системы.
+
+Добавление репо:
+sudo add-apt-repository ppa:thomas-schiex/blender
+Установка пакета:
+sudo apt install blender
+Удаление репо:
+sudo add-apt-repository --remove ppa:thomas-schiex/blender
+Очистка хранилища:
+ppa-purge ppa:thomas-schiex/blender
+
+
+6. * Создать задачу резервного копирования (tar) домашнего каталога 
+пользователя. Реализовать с использованием пользовательских crontab-файлов
+
+Команда для редактирования crontab:
+crontab -e
+Записываем в файл скрипт, который выполняет резервное копирование каждый 
+день в 3 часа ночи:
+0 3 * * * tar -czf /home/backup.tar.gz /home/REALPROMMS
