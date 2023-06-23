@@ -1,0 +1,192 @@
+1. Установить Nginx и настроить его на работу с PHP-FPM.
+
+Для установки Nginx и настройки его на работу с PHP-FPM вам потребуется выполнить следующие шаги:
+
+Установка Nginx:
+ sudo apt update
+ sudo apt install nginx
+
+Установка PHP-FPM:
+ sudo apt install php-fpm
+
+Настройка Nginx для работы с PHP-FPM:
+ sudo nano /etc/nginx/sites-available/default
+
+	server {
+		listen 80 default_server;
+		listen [::]:80 default_server;
+ 
+		root /var/www/html;
+		index index.php index.html index.htm;
+ 
+		server_name andreypink.ru;
+ 
+		locadon / {
+		try_files $uri $uri/ =404;
+		}
+ 
+		locadon ~ \.php$ {
+		include snippets/fastcgi-php.conf;
+		fastcgi_pass unix:/run/php/php7.4-fpm.sock; 
+		}
+		}
+ 
+Проверка конфигурации и перезапуск Nginx:
+ sudo nginx -t
+ sudo service nginx restart
+
+
+2. * Установить Apache. Настроить обработку PHP. Добиться одновременной работы 
+с Nginx.
+
+Установка Apache и PHP:
+ sudo apt update
+ sudo apt install apache2 php libapache2-mod-php
+ 
+Включение модуля PHP в Apache:
+ sudo a2enmod php
+
+Настройка Apache для обработки PHP:
+ sudo nano /etc/apache2/mods-enabled/dir.conf
+
+	<IfModule mod_dir.c>
+	DirectoryIndex index.php index.html index.cgi index.pl index.xhtml index.htm
+	</IfModule>
+
+Перезапуск Apache для применения изменений:
+ sudo service apache2 restart
+
+Настройка Nginx для одновременной работы с Apache:
+ sudo nano /etc/nginx/sites-available/default
+
+ server {
+	listen 80 default_server;
+	listen [::]:80 default_server;
+	root /var/www/html;
+	index index.php index.html index.htm;
+	server_name andreypink.ru;
+	locadon / {
+	proxy_pass hyp://127.0.0.1:8080; 
+	proxy_set_header Host $host;
+	proxy_set_header X-Real-IP $remote_addr;
+	proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+	proxy_set_header X-Forwarded-Proto $scheme;
+	}
+	locadon ~ \.php$ {
+	include snippets/fastcgi-php.conf;
+	fastcgi_pass unix:/run/php/php7.4-fpm.sock; 
+	fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
+	}
+	}
+
+Проверка конфигурации и перезапуск Nginx:
+ sudo nginx -t
+ sudo service nginx restart
+
+
+3. Настроить схему обратного прокси для Nginx (динамика - на Apache).
+
+Отключение стандартной конфигурации Nginx:
+ sudo unlink /etc/nginx/sites-enabled/default
+
+Создание нового файла конфигурации для домена:
+ sudo nano /etc/nginx/sites-available/andreypink.conf
+
+ server {
+ listen 80;
+ listen [::]:80;
+
+ server_name andreypink.ru;
+
+ locadon / {
+	proxy_pass hyp://localhost:8080; 
+	proxy_set_header Host $host;
+	proxy_set_header X-Real-IP $remote_addr;
+	proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+	proxy_set_header X-Forwarded-Proto $scheme;
+	}
+	}
+
+Проверка конфигурации и перезапуск Nginx:
+ sudo nginx -t
+ sudo service nginx restart
+
+
+4. Установить MySQL. Создать новую базу данных и таблицу в ней.
+
+Установка MySQL:
+ sudo apt update
+ sudo apt install mysql-server
+ 
+Подключение к MySQL:
+ sudo mysql
+
+Создание новой базы данных:
+ CREATE DATABASE gb;
+
+Переключение на новую базу данных:
+ USE gb;
+ 
+Создание таблицы в базе данных:
+ CREATE TABLE gb_table (
+	id INT AUTO_INCREMENT PRIMARY KEY,
+	name VARCHAR(255),
+	count INT,
+	date DATE
+ );
+
+Проверка создания таблицы:
+ SHOW TABLES;
+
+
+5. * Установить пакет phpmyadmin и запустить его веб-интерфейс для управления 
+MySQL.
+
+Установка phpMyAdmin:
+ sudo apt update
+ sudo apt install phpmyadmin
+
+Настройка phpMyAdmin:
+ В файле конфигурации Apache добавляем строку в конец файла:
+ Include /etc/phpmyadmin/apache.conf
+
+ Открываем файл конфигурации phpMyAdmin для редактирования:
+ sudo nano /etc/phpmyadmin/config.inc.php
+
+ Меняем строку с `$cfg['blowfish_secret']` на случайно сгенерированную.
+
+Перезапускаем Apache:
+ sudo service apache2 restart
+
+Доступ к phpMyAdmin:
+hyp://localhost/phpmyadmin
+
+
+6. * Настроить схему балансировки трафика между несколькими серверами Apache 
+на стороне Nginx с помощью модуля ngx_hcp_upstream_module.
+
+Создание файла конфигурации:
+ sudo nano /etc/nginx/conf.d/myloadbalancer.conf
+ 
+ Вставляем конфигурационный код в файл:
+ upstream backend {
+	server apache1.example.com;
+	server apache2.example.com;
+	server apache3.example.com;
+	}
+	server {
+	listen 80;
+	server_name myloadbalancer.example.com;
+	locadon / {
+	proxy_pass hyp://backend;
+	proxy_set_header Host $host;
+	proxy_set_header X-Real-IP $remote_addr;
+	proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+	proxy_hyp_version 1.1;
+	proxy_set_header Connecdon "";
+	}
+	}
+	
+Проверка конфигурации и перезапуск Nginx:
+ sudo nginx -t
+ sudo service nginx restart
