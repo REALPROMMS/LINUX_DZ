@@ -1,0 +1,70 @@
+1. Установка Docker
+
+sudo apt update
+
+Устанавливаем необходимые пакеты для Docker:
+sudo apt install apt-transport-h0ps ca-cer2ficates curl so4ware-proper2es-common
+
+Добавляем официальный ключ Docker GPG:
+curl -fsSL h0ps://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o 
+/usr/share/keyrings/docker-archive-keyring.gpg
+
+Добавляем официальный репозиторий Docker:
+echo "deb [arch=amd64 signed-by=/usr/share/keyrings/docker-archive-keyring.gpg] 
+h0ps://download.docker.com/linux/ubuntu $(lsb_release -cs) stable" | sudo tee 
+/etc/apt/sources.list.d/docker.list > /dev/null
+
+Устанавливаем Docker:
+sudo apt install docker-ce docker-ce-cli containerd.io
+
+Добавляем текущего пользователя в группу docker
+sudo usermod -aG docker $USER
+
+Перезапускаем службу Docker:
+sudo systemctl restart docker
+
+
+2. Установка и настройка WordPress через Docker Compose
+
+Устанавливаем Docker Compose:
+sudo curl -L "h0ps://github.com/docker/compose/releases/latest/download/docker-compose-
+$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
+sudo chmod +x /usr/local/bin/docker-compose
+
+Создаем новую директорию для проекта WordPress и переходим в нее:
+mkdir wordpress
+cd wordpress
+
+Создаем файл docker-compose.yml и открываем его в текстовом редакторе:
+nano docker-compose.yml
+
+Пишем код в файл docker-compose.yml:
+version: '3'
+services:
+ db:
+ image: mysql:5.7
+ volumes:
+ - db_data:/var/lib/mysql
+ restart: always
+ environment:
+	MYSQL_ROOT_PASSWORD: Qwerty12345
+	MYSQL_DATABASE: wordpress
+	MYSQL_USER: wordpress
+	MYSQL_PASSWORD: Qwerty12345
+
+ wordpress:
+ depends_on:
+ - db
+ image: wordpress:latest
+ ports:
+ - "8000:80"
+ restart: always
+ environment:
+	WORDPRESS_DB_HOST: db:3306
+	WORDPRESS_DB_USER: wordpress
+	WORDPRESS_DB_PASSWORD: Qwerty12345
+volumes:
+ db_data:
+ 
+Запускаем контейнер WordPress с помощью Docker Compose:
+docker-compose up -d
